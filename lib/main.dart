@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'core/app_router.dart';
 import 'core/service_locator.dart';
 
-void main() {
-  // 1. Inisialisasi Service Locator (Dependency Injection)
-  setupLocator();
+void main() async {
+  // Wajib untuk Native Integration & Hive
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // 1. Reactive Local Database Initialization
+  await Hive.initFlutter();
+  await Hive.openBox('offline_products'); 
+
+  // 2. Dependency Injection
+  await setupLocator();
   
   runApp(const MyApp());
 }
@@ -14,16 +22,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 2. Gunakan MaterialApp.router sesuai syarat GoRouter
     return MaterialApp.router(
-      title: 'UTD Store Naia Sila AF',
+      title: 'UTD Store Premium',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-        useMaterial3: true,
-      ),
-      // 3. Hubungkan dengan router yang kita buat di core/app_router.dart
-      routerConfig: router, 
+      theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.blue),
+      routerConfig: router,
     );
   }
 }

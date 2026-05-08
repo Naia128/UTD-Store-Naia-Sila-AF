@@ -1,9 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive_flutter/hive_flutter.dart'; // Import Hive
 import '../../../../core/api_service.dart';
-import '../../data/product_model.dart';
 import '../../../../core/service_locator.dart';
+import '../../data/product_model.dart';
 
-// State sederhana: Loading, Success, Error
 abstract class ProductState {}
 class ProductInitial extends ProductState {}
 class ProductLoading extends ProductState {}
@@ -22,18 +22,42 @@ class ProductCubit extends Cubit<ProductState> {
   Future<void> fetchProducts() async {
     emit(ProductLoading());
     try {
-      final api = sl<ApiService>();
-      final response = await api.dio.get('/products');
+      // 1. Ambil data dari API
+      final response = await sl<ApiService>().dio.get('/products');
+      final data = response.data as List;
       
-      if (response.statusCode == 200) {
-        final List data = response.data;
-        final products = data.map((e) => ProductModel.fromMap(e)).toList();
-        emit(ProductLoaded(products));
-      } else {
-        emit(ProductError("Gagal mengambil data"));
+      // 2. REACTIVE DB: Simpan ke Hive (Offline First)
+      var box = Hive.box('offline_products');
+      await box.clear(); // Bersihkan cache lama
+      
+      for (var item in data) {
+        await box.add({
+          'title': "${item['title']} [Diskon 10%]", // Logika NIM Ganjil kamu
+          'price': item['price'],
+          'image': item['image'],
+        });
       }
+      
+      // 3. Ubah ke List Model untuk UI
+      final products = data.map((e) => ProductModel.fromMap(e)).toList();
+      emit(ProductLoaded(products));
+
     } catch (e) {
-      emit(ProductError(e.toString()));
+      // 4. OFFLINE MODE: Jika internet mati, ambil dari Hive
+      var box = Hive.box('offline_products');
+      if (box.isNotEmpty) {
+        final offlineData = box.values.map((e) {
+          return ProductModel(
+            id: 0,
+            title: e['title'],
+            price: (e['price'] as num).toDouble(),
+            image: e['image'] ?? '',
+          );
+        }).toList();
+        emit(ProductLoaded(offlineData));
+      } else {
+        emit(ProductError("Koneksi gagal dan tidak ada data lokal."));
+      }
     }
   }
 }

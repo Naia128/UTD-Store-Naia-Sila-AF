@@ -11,6 +11,8 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.6
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
   
   # 1. Arsitektur, Routing & DI [cite: 21, 22]
   get_it: ^7.6.4
