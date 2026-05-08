@@ -14,17 +14,12 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _startSplash();
+    _init();
   }
 
-  Future<void> _startSplash() async {
-    // 1. Panggil Service dari Locator
-    final splashService = sl<SplashService>();
-    
-    // 2. Jalankan delay 1 detik (Logika NIM Akhiran 1)
-    await splashService.setupDelay();
-    
-    // 3. Pindah ke halaman Home menggunakan GoRouter
+  void _init() async {
+    final service = sl<SplashService>();
+    await service.initializeApp();
     if (mounted) {
       context.go('/home');
     }
@@ -33,25 +28,34 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: Center(
-        child: Column(
+      body: Container(
+        width: MediaQuery.of(context).size.width,
+        color: Colors.blueAccent,
+        child: const Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Logo atau Icon Store
-            const Icon(Icons.store, size: 100, color: Colors.blue),
-            const SizedBox(height: 20),
-            // Nama dan NIM Kamu
-            const Text(
-              "UTD Store Naia Sila AF",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            Icon(
+              Icons.local_mall_rounded,
+              size: 80,
+              color: Colors.white,
             ),
-            const Text(
-              "NIM: 20123061",
-              style: TextStyle(fontSize: 16, color: Colors.grey),
+            SizedBox(height: 20),
+            Text(
+              "UTD STORE",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 26,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            const SizedBox(height: 50),
-            const CircularProgressIndicator(), // Loading kecil biar keren
+            SizedBox(height: 8),
+            Text(
+              "Naia - NIM Kamu", // Ganti dengan NIM asli ya!
+              style: TextStyle(
+                color: Colors.white70,
+                fontSize: 16,
+              ),
+            ),
           ],
         ),
       ),

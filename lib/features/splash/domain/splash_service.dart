@@ -1,6 +1,9 @@
+import 'dart:async';
+
 class SplashService {
-  // Logika Personal: Delay 1 detik karena digit terakhir NIM adalah 1
-  Future<void> setupDelay() async {
-    await Future.delayed(const Duration(seconds: 1));
+  // Pastikan namanya "initializeApp" (tanpa typo)
+  Future<void> initializeApp() async {
+    // Delay 1 detik sesuai NIM ganjil (1)
+    await Future.delayed(const Duration(milliseconds: 1000));
   }
 }
