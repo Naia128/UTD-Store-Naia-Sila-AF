@@ -2,29 +2,23 @@ class ProductModel {
   final int id;
   final String title;
   final double price;
-  final String description;
-  final String category;
   final String image;
 
   ProductModel({
     required this.id,
     required this.title,
     required this.price,
-    required this.description,
-    required this.category,
     required this.image,
   });
 
-  // Factory untuk merubah JSON dari API menjadi Object Flutter
-  factory ProductModel.fromJson(Map<String, dynamic> json) {
+  // Pastikan namanya 'fromMap' agar sesuai dengan pemanggilan di Cubit
+  factory ProductModel.fromMap(Map<String, dynamic> map) {
     return ProductModel(
-      id: json['id'],
-      // LOGIKA PERSONAL: Tambahkan [Diskon 10%] karena NIM Ganjil (1)
-      title: "${json['title']} [Diskon 10%]", 
-      price: (json['price'] as num).toDouble(),
-      description: json['description'],
-      category: json['category'],
-      image: json['image'],
+      id: map['id'] ?? 0,
+      // Logika NIM Ganjil tetap terjaga
+      title: "${map['title']} [Diskon 10%]",
+      price: (map['price'] as num).toDouble(),
+      image: map['image'] ?? '',
     );
   }
 }
