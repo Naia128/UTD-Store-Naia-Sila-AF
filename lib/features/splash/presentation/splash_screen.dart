@@ -50,7 +50,7 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
             SizedBox(height: 8),
             Text(
-              "Naia - NIM Kamu", // Ganti dengan NIM asli ya!
+              "Naia - 20123061", // Ganti dengan NIM asli ya!
               style: TextStyle(
                 color: Colors.white70,
                 fontSize: 16,
